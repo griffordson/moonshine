@@ -1,1 +1,1 @@
-require File.dirname(__FILE__) + '/moonshine_config_helper'
+#we don't need to load anything for rails just yet

@@ -131,10 +131,10 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
   end
 
   # config/moonshine.yml
-  configure(YAML::load(ERB.new(IO.read(MoonshineConfigHelper.moonshine_configuration_path)).result))
+  configure(YAML::load(ERB.new(IO.read(File.join(rails_root, 'config', 'moonshine.yml'))).result))
 
   # database config
-  configure(:database => YAML::load(ERB.new(IO.read(MoonshineConfigHelper.database_configuration_path)).result))
+  configure(:database => YAML::load(ERB.new(IO.read(File.join(rails_root, 'config', 'database.yml'))).result))
 
   # gems
   configure(:gems => (YAML.load_file(File.join(rails_root, 'config', 'gems.yml')) rescue nil))
