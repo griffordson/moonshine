@@ -51,6 +51,7 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
     ENV["RAILS_ENV"] || 'production'
   end
   
+  # The current Rails environment
   def rails_env
     self.class.rails_env
   end
@@ -65,13 +66,51 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
     ENV['DEPLOY_STAGE'] || 'undefined'
   end
   
+  # The current deployment target. Best when used with capistrano-ext's multistage settings.
   def deploy_stage
     self.class.deploy_stage
   end
   
-  # Only run tasks on the specified stage.
+  # Only run tasks on the specified deploy_stage.
+  #
+  # You can call it with the exact stage you want to run on:
+  # 
+  #  on_stage("my_stage") do
+  #    puts "I'm on my_stage"
+  #  end
+  #
+  # Or you can pass an array of stages to run on:
+  # 
+  #  on_stage(["my_stage", "my_other_stage"]) do
+  #    puts "I'm on one of my stages"
+  #  end
   def on_stage(stagename)
-    yield if deploy_stage == stagename
+    if stagename.is_a?(Array) && stagename.include?(deploy_stage)
+      yield
+    elsif deploy_stage == stagename
+      yield
+    end
+  end
+  
+  # Don't run task on the specified deploy_stage.
+  #
+  # You can call it with the exact stage you don't want to run on:
+  # 
+  #  not_on_stage("my_stage") do
+  #    puts "I'm on my_stage"
+  #  end
+  #
+  # Or you can pass an array of stages to not run on:
+  # 
+  #  not_on_stage(["my_stage", "my_other_stage"]) do
+  #    puts "I'm not on one of my stages"
+  #  end
+  def not_on_stage(stagename)
+    if stagename.is_a?(Array) && !stagename.include?(deploy_stage)
+      yield
+    elsif stagename.is_a?(String) && deploy_stage != stagename
+      yield
+    end
   end
 
   # Render the ERB template located at <tt>pathname</tt>. If a template exists
