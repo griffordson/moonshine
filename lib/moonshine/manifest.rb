@@ -35,7 +35,7 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
     end
     Kernel.eval(File.read(path), binding, path)
     true
-   end
+  end
 
   # The working directory of the Rails application this manifests describes.
   def self.rails_root
@@ -90,12 +90,20 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
     end
     ERB.new(template_contents).result(b)
   end
+  
+  def self.read_moonshine_config
+    IO.read(ConfigurationHelper.moonshine_configuration_path)
+  end
+  
+  def self.read_database_config
+    IO.read(ConfigurationHelper.database_configuration_path)
+  end
 
   # config/moonshine.yml
-  configure(YAML::load(ERB.new(IO.read(File.join(rails_root, 'config', 'moonshine.yml'))).result))
+  configure(YAML::load(ERB.new(read_moonshine_config).result))
 
   # database config
-  configure(:database => YAML::load(ERB.new(IO.read(File.join(rails_root, 'config', 'database.yml'))).result))
+  configure(:database => YAML::load(ERB.new(read_database_config).result))
 
   # gems
   configure(:gems => (YAML.load_file(File.join(rails_root, 'config', 'gems.yml')) rescue nil))

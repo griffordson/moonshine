@@ -1,0 +1,6 @@
+:ruby: ree
+:application: my_app
+:user: rails
+:deploy_to: /srv/my_app
+:domain: my_app.example.com
+:repository: my_app_repo

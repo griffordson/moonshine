@@ -1,1 +1,1 @@
-#we don't need to load anything for rails just yet
+require File.dirname(__FILE__) + '/configuration_helper'
