@@ -92,11 +92,11 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
   end
   
   def self.read_moonshine_config
-    IO.read(ConfigurationHelper.moonshine_configuration_path)
+    IO.read(MoonshineConfigHelper.moonshine_configuration_path)
   end
   
   def self.read_database_config
-    IO.read(ConfigurationHelper.database_configuration_path)
+    IO.read(MoonshineConfigHelper.database_configuration_path)
   end
 
   # config/moonshine.yml

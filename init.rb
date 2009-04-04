@@ -1,1 +1,1 @@
-require File.dirname(__FILE__) + '/configuration_helper'
+require File.dirname(__FILE__) + '/moonshine_config_helper'
