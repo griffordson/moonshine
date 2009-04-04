@@ -57,6 +57,7 @@ recipe :foo
   def test_on_stage_runs_when_string_stage_matches
     @manifest = Moonshine::Manifest.new
     @manifest.expects(:deploy_stage).returns("my_stage")
+    
     assert_equal 'on my_stage', @manifest.on_stage("my_stage") { "on my_stage" }
   end
   

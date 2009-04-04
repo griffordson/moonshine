@@ -105,11 +105,11 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
       if_opt = args
     end
     
-    if if_opt && if_opt.is_a?(Array) && if_opt.map(&:to_s).include?(deploy_stage)
+    if if_opt && if_opt.is_a?(Array) && if_opt.map {|x| x.to_s}.include?(deploy_stage)
       yield
     elsif if_opt && (if_opt.is_a?(String) || if_opt.is_a?(Symbol)) && deploy_stage == if_opt.to_s
       yield
-    elsif unless_opt && unless_opt.is_a?(Array) && !unless_opt.map(&:to_s).include?(deploy_stage)
+    elsif unless_opt && unless_opt.is_a?(Array) && !unless_opt.map {|x| x.to_s}.include?(deploy_stage)
       yield
     elsif unless_opt && (unless_opt.is_a?(String) || unless_opt.is_a?(Symbol)) && deploy_stage != unless_opt.to_s
       yield
