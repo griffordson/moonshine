@@ -75,40 +75,43 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
   #
   # You can call it with the exact stage you want to run on:
   # 
-  #  on_stage("my_stage") do
+  #  on_stage(:my_stage) do
   #    puts "I'm on my_stage"
   #  end
   #
   # Or you can pass an array of stages to run on:
   # 
-  #  on_stage(["my_stage", "my_other_stage"]) do
+  #  on_stage(:my_stage, :my_other_stage) do
   #    puts "I'm on one of my stages"
   #  end
-  def on_stage(stagename)
-    if stagename.is_a?(Array) && stagename.include?(deploy_stage)
-      yield
-    elsif deploy_stage == stagename
-      yield
+  #
+  # Or you can run a task unless it is on a stage:
+  #
+  #  on_stage(:unless => :my_stage) do
+  #    puts "I'm not on my_stage"
+  #  end
+  #
+  # Or you can run a task unless it is on one of several stages:
+  #
+  #  on_stage(:unless => [:my_stage, :my_other_stage]) do
+  #    puts "I'm not on my stages"
+  #  end
+  def on_stage(*args)
+    options = args.extract_options!
+    if_opt = options[:if]
+    unless_opt = options[:unless]
+    
+    unless if_opt || unless_opt
+      if_opt = args
     end
-  end
-  
-  # Don't run task on the specified deploy_stage.
-  #
-  # You can call it with the exact stage you don't want to run on:
-  # 
-  #  not_on_stage("my_stage") do
-  #    puts "I'm on my_stage"
-  #  end
-  #
-  # Or you can pass an array of stages to not run on:
-  # 
-  #  not_on_stage(["my_stage", "my_other_stage"]) do
-  #    puts "I'm not on one of my stages"
-  #  end
-  def not_on_stage(stagename)
-    if stagename.is_a?(Array) && !stagename.include?(deploy_stage)
+    
+    if if_opt && if_opt.is_a?(Array) && if_opt.map(&:to_s).include?(deploy_stage)
       yield
-    elsif stagename.is_a?(String) && deploy_stage != stagename
+    elsif if_opt && (if_opt.is_a?(String) || if_opt.is_a?(Symbol)) && deploy_stage == if_opt.to_s
+      yield
+    elsif unless_opt && unless_opt.is_a?(Array) && !unless_opt.map(&:to_s).include?(deploy_stage)
+      yield
+    elsif unless_opt && (unless_opt.is_a?(String) || unless_opt.is_a?(Symbol)) && deploy_stage != unless_opt.to_s
       yield
     end
   end
