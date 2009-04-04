@@ -4,9 +4,6 @@ module Moonshine::Iptables
 end
 
 class Moonshine::ManifestTest < Test::Unit::TestCase
-  def setup
-    #io = IO.new
-  end
   
   def test_loads_configuration
     assert_not_nil Moonshine::Manifest.configuration[:application]
@@ -55,6 +52,10 @@ recipe :foo
 
   def test_loads_database_config
     assert_equal 'utf8', Moonshine::Manifest.configuration[:database][:production][:encoding]
+  end
+  
+  def method_name
+    
   end
 
 end
