@@ -45,12 +45,12 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
   def rails_root
    self.class.rails_root
   end
-  
+
   # The current Rails environment
   def self.rails_env
     ENV["RAILS_ENV"] || 'production'
   end
-  
+
   # The current Rails environment
   def rails_env
     self.class.rails_env
@@ -60,27 +60,27 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
   def database_environment
    configuration[:database][rails_env.to_sym]
   end
-  
+
   # The current deployment target. Best when used with capistrano-ext's multistage settings.
   def self.deploy_stage
     ENV['DEPLOY_STAGE'] || 'undefined'
   end
-  
+
   # The current deployment target. Best when used with capistrano-ext's multistage settings.
   def deploy_stage
     self.class.deploy_stage
   end
-  
+
   # Only run tasks on the specified deploy_stage.
   #
   # You can call it with the exact stage you want to run on:
-  # 
+  #
   #  on_stage(:my_stage) do
   #    puts "I'm on my_stage"
   #  end
   #
   # Or you can pass an array of stages to run on:
-  # 
+  #
   #  on_stage(:my_stage, :my_other_stage) do
   #    puts "I'm on one of my stages"
   #  end
@@ -100,11 +100,11 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
     options = args.extract_options!
     if_opt = options[:if]
     unless_opt = options[:unless]
-    
+
     unless if_opt || unless_opt
       if_opt = args
     end
-    
+
     if if_opt && if_opt.is_a?(Array) && if_opt.map {|x| x.to_s}.include?(deploy_stage)
       yield
     elsif if_opt && (if_opt.is_a?(String) || if_opt.is_a?(Symbol)) && deploy_stage == if_opt.to_s
