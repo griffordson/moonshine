@@ -1,3 +1,5 @@
+curb:
+- libcurl4-openssl-dev
 mysql:
 - libmysqlclient15-dev
 sqlite3-ruby:
@@ -22,3 +24,6 @@ postgres:
 - postgresql-client
 - postgresql-contrib
 - libpq-dev
+libxml-ruby:
+- libxml2
+- libxml2-dev
