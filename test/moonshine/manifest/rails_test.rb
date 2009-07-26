@@ -139,9 +139,19 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
   end
 
   def test_installs_passenger_gem
+    @manifest.configure(:passenger => { :version => nil })
     @manifest.passenger_configure_gem_path
     @manifest.passenger_gem
     assert_not_nil @manifest.packages["passenger"]
+    assert_equal :latest, @manifest.packages["passenger"].ensure
+  end
+
+  def test_can_pin_passenger_to_a_specific_version
+    @manifest.configure(:passenger => { :version => '2.2.2' })
+    @manifest.passenger_configure_gem_path
+    @manifest.passenger_gem
+    assert_not_nil @manifest.packages["passenger"]
+    assert_equal '2.2.2', @manifest.packages["passenger"].ensure
   end
 
   def test_installs_passenger_module
@@ -288,6 +298,22 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
     assert_not_nil @manifest.packages["logrotate"]
     assert_match /compress/, @manifest.files["/etc/logrotate.d/srvtheappsharedlogslog.conf"].content
     assert_match /nocompress/, @manifest.files["/etc/logrotate.d/srvotherappsharedlogslog.conf"].content
+  end
+
+  def test_rails_logroate_is_configurable
+    @manifest.configure(
+      :deploy_to => '/srv/foo',
+      :rails_logrotate => {
+        :options => %w(foo bar baz),
+        :postrotate => 'do something'
+      }
+    )
+    @manifest.send(:rails_logrotate)
+    assert_not_nil @manifest.packages["logrotate"]
+    assert_match /foo/, @manifest.files["/etc/logrotate.d/srvfoosharedloglog.conf"].content
+    assert_no_match /compress/, @manifest.files["/etc/logrotate.d/srvfoosharedloglog.conf"].content
+    assert_match /do something/, @manifest.files["/etc/logrotate.d/srvfoosharedloglog.conf"].content
+    assert_no_match /restart\.txt/, @manifest.files["/etc/logrotate.d/srvfoosharedloglog.conf"].content
   end
 
   def test_postgresql_server

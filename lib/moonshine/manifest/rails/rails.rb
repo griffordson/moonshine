@@ -47,9 +47,10 @@ module Moonshine::Manifest::Rails::Rails
 
   # Rotates the logs for this rails app
   def rails_logrotate
+    configure(:rails_logrotate => {})
     logrotate("#{configuration[:deploy_to]}/shared/log/*.log", {
-      :options => %w(daily missingok compress delaycompress sharedscripts),
-      :postrotate => "touch #{configuration[:deploy_to]}/current/tmp/restart.txt"
+      :options => configuration[:rails_logrotate][:options] || %w(daily missingok compress delaycompress sharedscripts),
+      :postrotate => configuration[:rails_logrotate][:postrotate] || "touch #{configuration[:deploy_to]}/current/tmp/restart.txt"
     })
     file "/etc/logrotate.d/#{configuration[:deploy_to].gsub('/','')}sharedlog.conf", :ensure => :absent
   end
@@ -65,7 +66,7 @@ module Moonshine::Manifest::Rails::Rails
       :mode     => '775',
       :content  => ' '
     exec 'rake tasks',
-      :command => 'rake environment 2>&1 >> /var/log/moonshine_rake.log',
+      :command => 'rake environment >> /var/log/moonshine_rake.log 2>&1',
       :user => configuration[:user],
       :cwd => rails_root,
       :environment => "RAILS_ENV=#{ENV['RAILS_ENV']}",
@@ -224,7 +225,7 @@ private
   # app, with RAILS_ENV properly set
   def rake(name, options = {})
     exec("rake #{name}", {
-      :command => "rake #{name} 2>&1 >> /var/log/moonshine_rake.log",
+      :command => "rake #{name} >> /var/log/moonshine_rake.log 2>&1",
       :user => configuration[:user],
       :cwd => rails_root,
       :environment => "RAILS_ENV=#{ENV['RAILS_ENV']}",
