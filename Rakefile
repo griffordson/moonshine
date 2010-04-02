@@ -16,9 +16,8 @@ task :default => :test
 
 desc 'Test the moonshine plugin.'
 Rake::TestTask.new(:test) do |t|
-  t.libs << 'lib'
   t.libs << 'test'
-  t.pattern = 'test/**/*_test.rb'
+  t.pattern = 'test/**/test_*.rb'
   t.verbose = true
 end
 
@@ -77,7 +76,8 @@ task :redoc do
   #move it all to the root
   system "cp -r doc/* . && rm -rf doc"
 
-  #commit and push
+  #add, commit and push
+  system "git add ."
   system "git commit -am 'regenerate rdocs' && git push origin gh-pages && git push github gh-pages"
   system "git checkout master"
 end
